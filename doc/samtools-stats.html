@@ -2,8 +2,8 @@
 permalink: /doc/samtools-stats.html
 layout: manpage
 title: samtools-stats(1) manual page
-package: samtools-1.24
-date: 9 July 2026
+package: samtools-1.25
+date: 27 October 2026
 section_text: Bioinformatics tools
 redirect_from: /doc/samtools-stats.1.html
 ---
@@ -413,6 +413,8 @@ based on the tagged field
 (e.g., use
 <b>--split RG</b>
 to split into read groups).
+The tag data used must have string type (Z in SAM).
+Splitting on numeric tags is not currently supported.
 <p>
 Categorised statistics are written to files named
 &lt;<em>prefix</em>&gt;_&lt;<em>value</em>&gt;.bamstat,

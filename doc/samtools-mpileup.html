@@ -2,8 +2,8 @@
 permalink: /doc/samtools-mpileup.html
 layout: manpage
 title: samtools-mpileup(1) manual page
-package: samtools-1.24
-date: 9 July 2026
+package: samtools-1.25
+date: 27 October 2026
 section_text: Bioinformatics tools
 redirect_from: /doc/samtools-mpileup.1.html
 ---
@@ -132,7 +132,9 @@ The fields selected appear in the same order as in SAM:
 <b>PNEXT</b>,
 followed by
 <b>RLEN</b>
-for unclipped read length.
+for unclipped read length, and
+<b>ENDPOS</b>
+for the last reference base covered by the alignment.
 </li>
 <li>Comma-separated 1-based positions within the alignments, in 5' to 3'
 orientation.  E.g., 5 indicates that it is the fifth base of the
@@ -280,7 +282,7 @@ none of the mask bits set.  Hence this does not override the
 </dd><dt><b>--ff, --excl-flags</b><em> STR|INT</em></dt><dd><p>
 Filter flags: skip reads with any of the mask bits set.  This defaults
 to SECONDARY,QCFAIL,DUP.  The option is not accumulative, so
-specifying e.g. <b>--ff QCFAIL</b> will reenable output of
+specifying e.g. <b>--ff QCFAIL</b> will re-enable output of
 secondary and duplicate alignments.  Note this does not override the
 <b>--incl-flags</b> option.
 </dd><dt><b>-x, --ignore-overlaps-removal, --disable-overlap-removal</b></dt><dd><p>
@@ -327,7 +329,7 @@ mpileup command in the same order as in the document (i.e.
 The names are case sensitive. Currently, only the following fields are
 supported:
 <p>
-<b>QNAME, FLAG, RNAME, POS, MAPQ, RNEXT, PNEXT, RLEN</b>
+<b>QNAME, FLAG, RNAME, POS, MAPQ, RNEXT, PNEXT, RLEN, ENDPOS</b>
 <p>
 Anything that is not on this list is treated as a potential tag, although only
 two character tags are accepted. In the mpileup output, tag columns are

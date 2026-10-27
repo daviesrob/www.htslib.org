@@ -2,8 +2,8 @@
 permalink: /doc/samtools-rmdup.html
 layout: manpage
 title: samtools-rmdup(1) manual page
-package: samtools-1.24
-date: 9 July 2026
+package: samtools-1.25
+date: 27 October 2026
 section_text: Bioinformatics tools
 redirect_from: /doc/samtools-rmdup.1.html
 ---
@@ -33,6 +33,8 @@ Remove duplicates for single-end reads. By default, the command works for
 paired-end reads only.
 </dd><dt><b>-S</b></dt><dd><p>
 Treat paired-end reads and single-end reads.
+</dd><dt><b>--no-PG</b></dt><dd><p>
+Do not add a @PG line to the header of the output file.
 <p>
 </dd></dl>
 <h1 id="LIMITATIONS"><a href="#LIMITATIONS">LIMITATIONS</a></h1>

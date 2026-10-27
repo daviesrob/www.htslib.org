@@ -476,7 +476,7 @@ commands can thus be  combined  with  Unix pipes.</p>
 <div class="sect2">
 <h3 id="_version">VERSION</h3>
 <div class="paragraph">
-<p>This manual page was last updated <strong>2026-06-16</strong> and refers to bcftools git version <strong>1.24</strong>.</p>
+<p>This manual page was last updated <strong>2026-10-22</strong> and refers to bcftools git version <strong>1.25</strong>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2295,6 +2295,30 @@ output VCF and are ignored for the prediction analysis.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><strong>--allow</strong> <em>LIST</em></dt>
+<dd>
+<p>Run even if these sanity checks fail (case insensitive)</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>mif</em>, <em>missing-in-FASTA</em></dt>
+<dd>
+<p>skip records w/o fasta reference</p>
+</dd>
+<dt class="hdlist1"><em>mig</em>, <em>missing-in-GFF</em></dt>
+<dd>
+<p>skip contigs w/o GFF annotations</p>
+</dd>
+<dt class="hdlist1"><em>cds-oop</em>, <em>CDS-out-of-phase</em></dt>
+<dd>
+<p>skip transcripts with phase errors</p>
+</dd>
+<dt class="hdlist1"><em>ref-mm</em>, <em>ref-mismatch</em></dt>
+<dd>
+<p>skip records with REF mismatch in VCF and FASTA</p>
+</dd>
+</dl>
+</div>
+</dd>
 <dt class="hdlist1"><strong>-B, --trim-protein-seq</strong> <em>INT</em></dt>
 <dd>
 <p>abbreviate protein-changing predictions to maximum of INT aminoacids.
@@ -2319,6 +2343,31 @@ shows how is the input GFF viewed by the program.</p>
 <dd>
 <p>exclude sites for which <em>EXPRESSION</em> is true. For valid expressions see
 <strong><a href="#expressions">EXPRESSIONS</a></strong>.</p>
+</dd>
+<dt class="hdlist1"><strong>-F, --format</strong> <em>LIST</em></dt>
+<dd>
+<p>Additional fields to output apart from consequence, gene, transcript, biotype, strand, amino_acid_change, and dna_change.
+All coordinates are 1-based.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>cds_position</em></dt>
+<dd>
+<p>position in the coding sequence and CDS length</p>
+</dd>
+<dt class="hdlist1"><em>exon</em></dt>
+<dd>
+<p>exon number and the number of exons in the transcript</p>
+</dd>
+<dt class="hdlist1"><em>exon_position</em></dt>
+<dd>
+<p>position within the exon and exon length</p>
+</dd>
+<dt class="hdlist1"><em>all</em></dt>
+<dd>
+<p>all of the above</p>
+</dd>
+</dl>
+</div>
 </dd>
 <dt class="hdlist1"><strong>-f, --fasta-ref</strong> <em>FILE</em></dt>
 <dd>
@@ -2518,19 +2567,22 @@ one of "tbi" or "csi" depending on output file format.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>    # Two separate VCF records at positions 2:122106101 and 2:122106102
+<pre>    # Two separate VCF records at positions chr2:121348525 and chr2:121348526
     # change the same codon. This UV-induced C&gt;T dinucleotide mutation
-    # has been annotated fully at the position 2:122106101 with
+    # has been annotated fully at the position chr2:121348526 with
     #   - consequence type
     #   - gene name
     #   - ensembl transcript ID
     #   - coding strand (+ fwd, - rev)
     #   - amino acid position (in the coding strand orientation)
     #   - list of corresponding VCF variants
+    #   - position in the coding sequence and CDS length (printed with -F)
+    #   - exon index and the number of exons (printed with -F)
+    #   - position within the exon and the exon length (printed with -F)
     # The annotation at the second position gives the position of the full
     # annotation
-    BCSQ=missense|CLASP1|ENST00000545861|-|1174P&gt;1174L|122106101G&gt;A+122106102G&gt;A
-    BCSQ=@122106101
+    BCSQ=@121348526
+    BCSQ=missense|CLASP1|ENST00000696935|protein_coding|-|1488P&gt;1488L|121348525G&gt;A+121348526G&gt;A|4463+4462/4680|39+39/41|195/207+194/207
 
     # A frame-restoring combination of two frameshift insertions C&gt;CG and T&gt;TGG
     BCSQ=@46115084
@@ -3682,6 +3734,15 @@ will take care of this, but to write to an entirely numeric filename use <strong
 <dd>
 <p>see <strong><a href="#common_options">Common Options</a></strong></p>
 </dd>
+<dt class="hdlist1"><strong>--progress</strong>[=<em>INT</em>]</dt>
+<dd>
+<p>Periodically print the current position (CHR:POS) of the pileup to standard
+error, to indicate how far the program has progressed. A line of the form
+"<code>[progress] mpileup: 1:1234567</code>" is printed for the first position and then
+about once every <em>INT</em> seconds; with <em>INT</em>=0 it is printed for every position.
+Positions outside the requested regions or targets may also be reported. Note
+that <em>INT</em> must follow with no space, e.g. <strong>--progress=10</strong>. Default: 60.</p>
+</dd>
 <dt class="hdlist1"><strong>--threads</strong> <em>INT</em></dt>
 <dd>
 <p>see <strong><a href="#common_options">Common Options</a></strong></p>
@@ -3939,7 +4000,7 @@ See also <strong>--atom-overlaps</strong> and <strong>--old-rec-tag</strong>.</p
 <dd>
 <p>Alleles missing because of an overlapping variant can be set either
 to missing (.) or to the star alele (*), as recommended by
-the VCF specification. IMPORTANT: Note that asterisk is expaneded
+the VCF specification. IMPORTANT: Note that asterisk is expanded
 by shell and must be put in quotes or escaped by a backslash:</p>
 </dd>
 </dl>
@@ -4039,10 +4100,6 @@ biallelic sites with both <strong>-m -snps</strong> and <strong>-m -indels</stro
 <p>use the reference (<em>0</em>) or missing (<em>.</em>) allele for overlapping alleles after
 splitting multiallelic sites</p>
 </dd>
-<dt class="hdlist1"><strong>--no-version</strong></dt>
-<dd>
-<p>see <strong><a href="#common_options">Common Options</a></strong></p>
-</dd>
 <dt class="hdlist1"><strong>-N, --no-realign</strong> [<em>NUM</em>]<a id="do_not_normalize"></a></dt>
 <dd>
 <p>do not realign indels and symbolic alleles (normally performed
@@ -4050,6 +4107,15 @@ when <strong>-f, --fasta-ref</strong> option is provided). If <em>NUM</em> is gi
 skip realignment only for events longer than <em>NUM</em> bp. Note
 that <em>NUM</em> must follow with no space, e.g. <strong>-N1000</strong> or <strong>--no-realign=1000</strong>.
 Previously named <strong>--do-not-normalize</strong> and did not accept an argument.</p>
+</dd>
+<dt class="hdlist1"><strong>--no-update</strong> <em>LIST</em></dt>
+<dd>
+<p>Do not recalculate INFO tags from GT.
+Currently supported tags: AC,AN</p>
+</dd>
+<dt class="hdlist1"><strong>--no-version</strong></dt>
+<dd>
+<p>see <strong><a href="#common_options">Common Options</a></strong></p>
 </dd>
 <dt class="hdlist1"><strong>--old-rec-tag</strong> <em>STR</em></dt>
 <dd>
@@ -4063,6 +4129,14 @@ annotation is CHROM|POS|REF|ALT|USED_ALT_IDX.</p>
 <dt class="hdlist1"><strong>-O, --output-type</strong> <em>b</em>|<em>u</em>|<em>z</em>|<em>v</em>[0-9]</dt>
 <dd>
 <p>see <strong><a href="#common_options">Common Options</a></strong></p>
+</dd>
+<dt class="hdlist1"><strong>--progress</strong>[=<em>INT</em>]</dt>
+<dd>
+<p>Periodically print the position (CHR:POS) of the record being processed to
+standard error, to indicate how far the program has progressed. A line of the
+form "<code>[progress] norm: 1:1234567</code>" is printed for the first record and then
+about once every <em>INT</em> seconds; with <em>INT</em>=0 it is printed for every record.
+Note that <em>INT</em> must follow with no space, e.g. <strong>--progress=10</strong>. Default: 60.</p>
 </dd>
 <dt class="hdlist1"><strong>-r, --regions</strong> <em>chr</em>|<em>chr:pos</em>|<em>chr:from-to</em>|<em>chr:from-</em>[,&#8230;&#8203;]</dt>
 <dd>
@@ -5142,6 +5216,10 @@ your system limit on the number of open files ("ulimit") may need to be increase
 <p>Use this directory to store temporary files. If the last six characters of the string DIR are XXXXXX,
 then these are replaced with a string that makes the directory name unique.</p>
 </dd>
+<dt class="hdlist1"><strong>--threads</strong> <em>INT</em></dt>
+<dd>
+<p>see <strong><a href="#common_options">Common Options</a></strong></p>
+</dd>
 <dt class="hdlist1"><strong>-v, --verbosity</strong> <em>INT</em></dt>
 <dd>
 <p>see <strong><a href="#common_options">Common Options</a></strong></p>
@@ -5326,6 +5404,14 @@ best compression.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><strong>--progress</strong>[=<em>INT</em>]</dt>
+<dd>
+<p>Periodically print the position (CHR:POS) of the record being processed to
+standard error, to indicate how far the program has progressed. A line of the
+form "<code>[progress] view: 1:1234567</code>" is printed for the first record and then
+about once every <em>INT</em> seconds; with <em>INT</em>=0 it is printed for every record.
+Note that <em>INT</em> must follow with no space, e.g. <strong>--progress=10</strong>. Default: 60.</p>
+</dd>
 <dt class="hdlist1"><strong>-r, --regions</strong> <em>chr</em>|<em>chr:pos</em>|<em>chr:from-to</em>|<em>chr:from-</em>[,&#8230;&#8203;]</dt>
 <dd>
 <p>see <strong><a href="#common_options">Common Options</a></strong></p>
@@ -5370,7 +5456,7 @@ one of "tbi" or "csi" depending on output file format.</p>
 <h4 id="_subset_options">Subset options:</h4>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><strong>-A, --trim-unseen-alleles</strong></dt>
+<dt class="hdlist1"><strong>-A, --trim-unseen-allele</strong></dt>
 <dd>
 <p>remove the unseen allele <em>&lt;*&gt;</em> or <em>&lt;NON_REF&gt;</em> at variant sites when the option is given once (-A) or
 at all sites when the options is given twice (<em>-AA</em>).</p>
@@ -5671,7 +5757,7 @@ web browser.</p>
 </dd>
 <dt class="hdlist1"><strong>-l, --min-length</strong> <em>NUM</em></dt>
 <dd>
-<p>Mimimum length of ROH [1e6]</p>
+<p>Minimum length of ROH [1e6]</p>
 </dd>
 <dt class="hdlist1"><strong>-o, --output</strong> <em>FILE</em></dt>
 <dd>
@@ -6263,7 +6349,7 @@ Copyright (c) Genome Research Ltd.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-09 10:42:20 +0100
+Last updated 2026-10-27 07:56:46 UTC
 </div>
 </div>
 </body>

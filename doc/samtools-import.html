@@ -2,8 +2,8 @@
 permalink: /doc/samtools-import.html
 layout: manpage
 title: samtools-import(1) manual page
-package: samtools-1.24
-date: 9 July 2026
+package: samtools-1.25
+date: 27 October 2026
 section_text: Bioinformatics tools
 redirect_from: /doc/samtools-import.1.html
 ---
@@ -140,6 +140,11 @@ or <b>*</b> to indicate all tags should be copied to the output,
 otherwise it is a comma-separated list of tag types to include with
 all others being discarded.
 <p>
+</dd><dt><b>-E, --allow-empty</b></dt><dd><p>
+By default import rejects empty files.  This is a safe-guard against a
+common pipeline failure of <b>some-command | samtools import -o out.bam</b>
+where some-command fails (accompanied by a lack of <b>set -o pipefail</b>
+in the shell). Empty inputs can be permitted by specifying <b>-E</b>.
 <p>
 </dd></dl>
 <h1 id="EXAMPLES"><a href="#EXAMPLES">EXAMPLES</a></h1>

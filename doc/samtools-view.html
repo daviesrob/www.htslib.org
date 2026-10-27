@@ -2,8 +2,8 @@
 permalink: /doc/samtools-view.html
 layout: manpage
 title: samtools-view(1) manual page
-package: samtools-1.24
-date: 9 July 2026
+package: samtools-1.25
+date: 27 October 2026
 section_text: Bioinformatics tools
 redirect_from: /doc/samtools-view.1.html
 ---
@@ -185,9 +185,12 @@ When this option is used, all alignments (or all alignments intersecting the
 specified) are written to either the output file or this file, but never both.
 </dd><dt><b>-p</b>, <b>--unmap</b></dt><dd><p>
 Set the UNMAP flag on alignments that are not selected by the filter options.
-These alignments are then written to the normal output.  This is not compatible
-with
-<b>-U</b>.
+These alignments are then written to the normal output.  When the
+<b>--unoutput</b> option is used, the alignments modified by <b>-p</b> are
+output to the unoutput file instead.  Note this combination does not necessarily
+mean all unmapped reads are written to the unoutput file, as some
+non-filtered alignments may have already been unmapped.  To achieve
+this, filter flags must contain a filter on MAPPED.
 </dd><dt><b>-t </b><em>FILE</em><b>, --fai-reference </b><em>FILE</em></dt><dd><p>
 A tab-delimited
 <em>FILE</em>.
@@ -505,6 +508,8 @@ Combine with <b>all,cigarx</b> to perform the "=" and "X" replacement too.
 <p>
 </dd><dt><b>--no-PG</b></dt><dd><p>
 Do not add a @PG line to the header of the output file.
+</dd><dt><b>--remove-ur</b></dt><dd><p>
+Remove all the UR tags from @SQ lines in the header.
 <p>
 </dd></dl>
 <h1 id="EXAMPLES"><a href="#EXAMPLES">EXAMPLES</a></h1>
